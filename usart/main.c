@@ -29,6 +29,7 @@ FUNCTIONS DECLARATIONS
 --------------------------------------------------------------------------------------------------------------------------------------------
 */ 
 void main(void); 
+void init_GPIOA(void);
 void init_USART(void); 
 
 /*
@@ -38,6 +39,7 @@ MAIN FUNCTION
 */ 
 
 void main(void) { 
+    init_GPIOA();
     init_USART();
 
     while(1) {
@@ -59,12 +61,13 @@ void main(void) {
 FUNCTIONS DEFINITIONS 
 --------------------------------------------------------------------------------------------------------------------------------------------
 */ 
-void init_USART(void) { 
-
+void init_GPIOA(void) {
     RCC -> AHBENR |= RCC_AHBENR_GPIOAEN; // connect clock signal to Port A
     GPIOA -> MODER |= (GPIO_MODER_MODER9_1 | GPIO_MODER_MODER10_1); // config Tx and Rx pins
-    GPIOA -> AFR[1] = ( 0b0001 << (9-8)*4 | 0b0001 << (10-8)*4 ); // enable USART functionality
-   
+    GPIOA -> AFR[1] = ( 0b0001 << (9-8)*4 | 0b0001 << (10-8)*4 ); // enable Tx and Rx pins' USART functionality 
+}
+
+void init_USART(void) {    
     RCC -> APB2ENR |= RCC_APB2ENR_USRT1EN; // connect USART1 to APB2 clock signal
     USART1 -> BRR = 480000000/9600; // set baud rate to 9600
     USART1 -> CR1 |= USART_CR1_M; // set word length to 1 byte (8-bits)
